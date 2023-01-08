@@ -22,7 +22,6 @@ public class OneDArraysReviewProgrammingChallenge2
 			System.out.print(arr[i] + " ");
 		} System.out.println("\n");
 
-
 		problem6(); System.out.println("\n");
 
 		problem7(); System.out.println("\n");
