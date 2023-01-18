@@ -2,9 +2,11 @@ import java.util.ArrayList;
 
 public class ArrayListsTraversalAlgorithmsPractice
 {
-	static ArrayList<Integer> list = new ArrayList<Integer>();
+	private ArrayList<Integer> list;
 
 	public ArrayListsTraversalAlgorithmsPractice(){
+		list = new ArrayList<Integer>();
+
 		for (int i = 0; i < 50; i++)
 			list.add((int)(Math.random()*100)+1);
 
@@ -89,15 +91,10 @@ public class ArrayListsTraversalAlgorithmsPractice
 	//shift all numbers up 3 index values
 	public void task6(){
 		for (int i = 0; i < 3; i++){
-			int permTemp = list.get(list.size()-4);
 			int temp = list.get(list.size()-1);
-			for (int j = list.size()-4; j > 0; j--){
+			for(int j = list.size()-1; j > 0; j--)
 				list.set(j, list.get(j-1));
-			}
-			list.remove(list.size()-1);
-			list.remove(0);
-			list.add(0, temp);
-			list.add(list.size()-2, permTemp);
+			list.set(0, temp);
 		}
 		System.out.println(list);
 	}
@@ -105,9 +102,11 @@ public class ArrayListsTraversalAlgorithmsPractice
 	//shift all numbers down 5 index values
 	public void task7(){
 		for (int i = 0; i < 5; i++){
-			for (int j = 5; j < list.size(); j++){
-				list.set(j-1, list.get(j));
+			int temp = list.get(0);
+			for (int j = 0; j < list.size()-1; j++){
+				list.set(j, list.get(j+1));
 			}
+			list.set(list.size()-1, temp);
 		}
 		System.out.println(list);
 	}
