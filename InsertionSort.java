@@ -16,7 +16,7 @@ public class InsertionSort
 		System.out.println(arr[arr.length-1]);
 		//sort
 		for (int i = 0; i < arr.length; i++){
-			for (int j = 0; j < i+1; j++){
+			for (int j = 0; j < i; j++){
 				if (arr[i] < arr[j]){
 					int temp = arr[i];
 					arr[i] = arr[j];
@@ -37,7 +37,7 @@ public class InsertionSort
 		System.out.println(list);
 		//sort
 		for (int i = 0; i < list.size(); i++){
-			for (int j = 0; j < i+1; j++){
+			for (int j = 0; j < i; j++){
 				if (list.get(i) < list.get(j)){
 					int temp = list.get(i);
 					list.set(i, list.get(j));
