@@ -86,6 +86,7 @@ public class GothamLikeAdventureTown
 		System.out.println(dailyPlanetStreet);
 		System.out.println("# of safetyLand people: " + safetyLand.size());
 		System.out.println("# of unfortunatelyFatallyWoundedPeople people: " + unfortunatelyFatallyWoundedPeople.size());
+		//prinitng catch phrases and evil plans
 		System.out.println(reverseFlash.getEvilPlan());
 		System.out.println(flash.getCatchphrase());
 	}
