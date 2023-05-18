@@ -7,7 +7,7 @@ import java.awt.Color;
 public class InterfaceDemo extends JPanel
 {
 	static JFrame frame = new JFrame();
-	static JLabel label = new JLabel("help me", JLabel.CENTER);
+	static JLabel label = new JLabel("", JLabel.CENTER);
 
 	public InterfaceDemo(){
 		frame.add(this);
