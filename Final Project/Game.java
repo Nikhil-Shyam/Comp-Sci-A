@@ -2,14 +2,15 @@ import java.util.ArrayList;
 import javax.swing.Timer;
 import java.awt.Rectangle;
 import javax.swing.JFrame;
-//import java.awt.event.KeyEvent;
+import javax.swing.JPanel;
+// import java.awt.event.KeyEvent;
 import java.awt.Graphics;
-//import java.awt.event.KeyAdapter;
-//import java.awt.event.ActionEvent;
-//import java.awt.*;
+// import java.awt.event.KeyAdapter;
+// import java.awt.event.ActionEvent;
+// import java.awt.*;
 import java.awt.event.*;
 
-public class Game extends JFrame{
+public class Game extends JPanel{
 	private int shipX;
 	private int shipY;
 	private int time;
@@ -25,12 +26,12 @@ public class Game extends JFrame{
 
     public Game(JFrame frame){
         this.frame = frame;
-        asteroids = new ArrayList<>();
-        projectiles = new ArrayList<>();
-        enemyRectangles = new ArrayList<>();
-        shipX = 100;
-        shipY = 200;
-        playerRectangle = new Rectangle(100, 200, 30, 30);
+        asteroids = new ArrayList<Asteroid>();
+        projectiles = new ArrayList<Projectile>();
+        enemyRectangles = new ArrayList<Rectangle>();
+        shipX = 0;
+        shipY = 0;
+        playerRectangle = new Rectangle(shipX, shipY, 30, 30);
 
         setFocusable(true);
         addKeyListener(new KeyAdapter(){
@@ -57,11 +58,21 @@ public class Game extends JFrame{
 	}
 
 	public void handleKeyPress(KeyEvent event){
+        if(event.getKeyCode() == 38 && shipY > frame.getHeight())
+            shipY--;
+        if (event.getKeyCode() == 40 && shipY < frame.getHeight())
+            shipY++;
+        if (event.getKeyCode() == 37 && shipX > frame.getWidth())
+            shipX--;
+        if (event.getKeyCode() == 39 && shipX < frame.getWidth())
+            shipX++;
+        if (event.getKeyCode() == 32)
+            shoot();
 
 	}
 
 	public void shoot(){
-
+        projectiles.add(new Projectile(15, 15));
 	}
 
 	public void checkForAsteroidCollisions(){
