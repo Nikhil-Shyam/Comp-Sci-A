@@ -15,7 +15,7 @@ public class Asteroid
 		return asteroidX;
 	}
 
-	public int asteroidY(){
+	public int getAsteroidY(){
 		return asteroidY;
 	}
 
@@ -29,7 +29,7 @@ public class Asteroid
 
 	public void updateAsteroid(){
 		if (!isDestroyed){
-			asteroidY += (int)(Math.random()*9)+2;
+			asteroidY += (int)(Math.random()*5)+2;
 			if (asteroidY > component.getHeight()){
 				asteroidY = 0;
 				asteroidX = (int)(Math.random()*(component.getWidth()+1));
