@@ -3,7 +3,7 @@ import javax.swing.Timer;
 import java.awt.Rectangle;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JComponent;
+// import javax.swing.JComponent;
 import java.awt.Color;
 // import java.awt.event.KeyEvent;
 import java.awt.Graphics;
@@ -61,7 +61,7 @@ public class Game extends JPanel{
 		}
 	}
 
-	public void handleKeyPress(KeyEvent event){
+	private void handleKeyPress(KeyEvent event){
         if(event.getKeyCode() == 38 && shipY > frame.getHeight())
             shipY--;
         if (event.getKeyCode() == 40 && shipY < frame.getHeight())
@@ -75,11 +75,11 @@ public class Game extends JPanel{
 
 	}
 
-	public void shoot(){
+	private void shoot(){
         projectiles.add(new Projectile(shipX/2, shipY/2));
 	}
 
-	public void checkForAsteroidCollisions(){
+	private void checkForAsteroidCollisions(){
 		for (int i = 0; i < enemyRectangles.size(); i++){
 			if (enemyRectangles.get(i).intersects(playerRectangle)){
 				enemyRectangles.remove(i);
@@ -89,7 +89,7 @@ public class Game extends JPanel{
 		}
 	}
 
-	public void generateNewAsteroid(){
+	private void generateNewAsteroid(){
 		int random = (int)(Math.random()*10)+1;
 		int value = 5;
 		if (random == value){
@@ -98,23 +98,23 @@ public class Game extends JPanel{
 		}
 	}
 
-	public void updateAsteroidLocation(){
+	private void updateAsteroidLocation(){
 		for (int i = 0; i < asteroids.size(); i++){
 			asteroids.get(i).updateAsteroid();
 		}
 	}
 
-	public void checkProjectileCollisions(){
+	private void checkProjectileCollisions(){
 
 	}
 
-	public void updateProjectiles(){
+	private void updateProjectiles(){
 		for (int i = 0; i < projectiles.size(); i++){
 			projectiles.get(i).updateProjectilePosition();
 		}
 	}
 
-	public void updateScreen(){
+	private void updateScreen(){
 		checkForAsteroidCollisions();
 		updateAsteroidLocation();
 		generateNewAsteroid();
@@ -122,13 +122,13 @@ public class Game extends JPanel{
 		updateProjectiles();
 	}
 
-	public void removeAsteroid(int index){
+	private void removeAsteroid(int index){
 		asteroids.get(index).setDestroyed(true);
 		asteroids.remove(index);
 		enemyRectangles.remove(index);
 	}
 
-	public void drawShip(Graphics graphics){
+	private void drawShip(Graphics graphics){
 		int[] x = {shipX, shipX+30, shipX+30, shipX};
 		int[] y = {shipY, shipY, shipY+30, shipY+30};
 		if (lives == 3)
@@ -140,7 +140,7 @@ public class Game extends JPanel{
 		graphics.fillPolygon(x, y, 4);
 	}
 
-	public void drawAsteroids(Graphics graphics){
+	private void drawAsteroids(Graphics graphics){
 		for (int i = 0; i < asteroids.size(); i++){
 			if (!asteroids.get(i).isDestroyed()){
 				graphics.setColor(Color.GRAY);
@@ -150,16 +150,19 @@ public class Game extends JPanel{
 		}
 	}
 
-	public void drawProjectiles(Graphics graphics){
-
+	private void drawProjectiles(Graphics graphics){
+		graphics.setColor(Color.CYAN);
+		for (int i = 0; i < projectiles.size(); i++){
+			graphics.fillRect(projectiles.get(i).getXPosition(), projectiles.get(i).getYPosition(), 6, 6);
+		}
 	}
 
-	public void setEndScreenText(Graphics graphics, String str){
+	private void setEndScreenText(Graphics graphics, String str){
 		graphics.setColor(Color.PINK);
 		graphics.drawString(str, 100, 100);
 	}
 
-	public void setGameOver(Graphics graphics){
+	private void setGameOver(Graphics graphics){
 		if (time <= 0 && asteroids.size() == 0)
 			setEndScreenText(graphics, "ALL ASTEROIDS DESTROYED, YOU WIN!");
 		else if (lives <= 0)
@@ -168,7 +171,26 @@ public class Game extends JPanel{
 			setEndScreenText(graphics, "OUT OF TIME, YOU LOSE!");
 	}
 
-	public void paintComponent(Graphics graphics){
+	protected void paintComponent(Graphics graphics){
+		graphics.setColor(Color.BLACK);
+		graphics.fillRect(0, 0, frame.getWidth(), frame.getHeight());
 
+		graphics.setColor(Color.WHITE);
+		graphics.drawString(Integer.toString(asteroidsHit), 100, 200);
+
+		graphics.setColor(Color.BLACK);
+		graphics.drawString(Integer.toString(time), 100, 250);
+
+		if (!gameOver){
+			drawShip(graphics);
+			drawAsteroids(graphics);
+			drawProjectiles(graphics);
+			time--;
+		}
+
+		if (time == 0 || lives == 0){
+			gameOver = true;
+			setGameOver(graphics);
+		}
 	}
 }
