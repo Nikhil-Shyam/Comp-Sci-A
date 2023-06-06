@@ -15,7 +15,7 @@ import java.awt.event.*;
 public class Game extends JPanel{
 	private int shipX;
 	private int shipY;
-	private int time = 60;
+	private int time = Integer.MAX_VALUE;
 	private int lives = 3;
 	private int asteroidsHit;
 	private boolean gameOver;
@@ -31,7 +31,7 @@ public class Game extends JPanel{
         asteroids = new ArrayList<Asteroid>();
         projectiles = new ArrayList<Projectile>();
         enemyRectangles = new ArrayList<Rectangle>();
-        shipX = 100;
+        shipX = 200;
         shipY = 100;
         playerRectangle = new Rectangle(shipX, shipY, 30, 30);
 
@@ -62,21 +62,21 @@ public class Game extends JPanel{
 	}
 
 	private void handleKeyPress(KeyEvent event){
-        if(event.getKeyCode() == 38 && shipY > frame.getHeight())
-            shipY--;
+        if(event.getKeyCode() == 38 && shipY < frame.getHeight())
+            shipY-=4;
         if (event.getKeyCode() == 40 && shipY < frame.getHeight())
-            shipY++;
-        if (event.getKeyCode() == 37 && shipX > frame.getWidth())
-            shipX--;
+            shipY+=4;
+        if (event.getKeyCode() == 37 && shipX < frame.getWidth())
+            shipX-=4;
         if (event.getKeyCode() == 39 && shipX < frame.getWidth())
-            shipX++;
+            shipX+=4;
         if (event.getKeyCode() == 32)
             shoot();
 
 	}
 
 	private void shoot(){
-        projectiles.add(new Projectile(shipX/2, shipY/2));
+        projectiles.add(new Projectile(shipX+15, shipY));
 	}
 
 	private void checkForAsteroidCollisions(){
@@ -90,7 +90,7 @@ public class Game extends JPanel{
 	}
 
 	private void generateNewAsteroid(){
-		int random = (int)(Math.random()*10)+1;
+		int random = (int)(Math.random()*50)+1;
 		int value = 5;
 		if (random == value){
 			asteroids.add(new Asteroid(this));
@@ -105,7 +105,19 @@ public class Game extends JPanel{
 	}
 
 	private void checkProjectileCollisions(){
-
+		for (int i = 0; i < asteroids.size(); i++){
+			for (int j = 0; j < projectiles.size(); j++){
+				projectiles.get(j).updateProjectilePosition();
+				if (projectiles.get(j).getXPosition() > frame.getWidth() || projectiles.get(j).getXPosition() < frame.getWidth() || projectiles.get(j).getYPosition() > frame.getHeight() || projectiles.get(j).getYPosition() > frame.getHeight()){
+					projectiles.remove(j);
+				}
+				if (new Rectangle(projectiles.get(j).getXPosition(), projectiles.get(j).getYPosition(), 6, 6).intersects(enemyRectangles.get(i))){
+					projectiles.remove(j);
+					removeAsteroid(i);
+					frame.repaint();
+				}
+			}
+		}
 	}
 
 	private void updateProjectiles(){
