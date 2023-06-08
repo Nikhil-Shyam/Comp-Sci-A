@@ -26,13 +26,16 @@ public class Game extends JPanel{
 	private Timer timer;
 	private JFrame frame;
 
+	private int velX = 0;
+	private int velY = 0;
+
     public Game(JFrame frame){
         this.frame = frame;
         asteroids = new ArrayList<Asteroid>();
         projectiles = new ArrayList<Projectile>();
         enemyRectangles = new ArrayList<Rectangle>();
         shipX = 200;
-        shipY = 100;
+        shipY = 500;
         playerRectangle = new Rectangle(shipX, shipY, 30, 30);
 
         setFocusable(true);
@@ -52,7 +55,7 @@ public class Game extends JPanel{
 				}
             }
         });
-        timer.start();
+       	timer.start();
     }
 
     public void updateEnemyRectangles(){
@@ -62,17 +65,28 @@ public class Game extends JPanel{
 	}
 
 	private void handleKeyPress(KeyEvent event){
-        if(event.getKeyCode() == 38 && shipY < frame.getHeight())
-            shipY-=4;
-        if (event.getKeyCode() == 40 && shipY < frame.getHeight())
-            shipY+=4;
-        if (event.getKeyCode() == 37 && shipX < frame.getWidth())
-            shipX-=4;
-        if (event.getKeyCode() == 39 && shipX < frame.getWidth())
-            shipX+=4;
-        if (event.getKeyCode() == 32)
-            shoot();
+        if(event.getKeyCode() == 38 && shipY > 0)
+			velY = -2;
 
+        if (event.getKeyCode() == 40 && shipY < frame.getHeight()-75)
+			velY = 2;
+
+        if (event.getKeyCode() == 37 && shipX > 0)
+			velX = -2;
+
+        if (event.getKeyCode() == 39 && shipX < frame.getWidth()-45)
+			//velX = 2;
+
+        if (event.getKeyCode() == 32){
+			shoot();
+		}
+		if (event.getKeyCode() == KeyEvent.VK_RIGHT){
+			velX = 2;
+			System.out.println("hi");
+		}else{
+			System.out.println("bye");
+			velX = 0;
+		}
 	}
 
 	private void shoot(){
@@ -107,11 +121,9 @@ public class Game extends JPanel{
 	private void checkProjectileCollisions(){
 		for (int i = 0; i < asteroids.size(); i++){
 			for (int j = 0; j < projectiles.size(); j++){
-				projectiles.get(j).updateProjectilePosition();
-				if (projectiles.get(j).getXPosition() > frame.getWidth() || projectiles.get(j).getXPosition() < frame.getWidth() || projectiles.get(j).getYPosition() > frame.getHeight() || projectiles.get(j).getYPosition() > frame.getHeight()){
+				if (projectiles.get(j).getYPosition() < 0){
 					projectiles.remove(j);
-				}
-				if (new Rectangle(projectiles.get(j).getXPosition(), projectiles.get(j).getYPosition(), 6, 6).intersects(enemyRectangles.get(i))){
+				}else if (new Rectangle(projectiles.get(j).getXPosition(), projectiles.get(j).getYPosition(), 6, 6).intersects(enemyRectangles.get(i))){
 					projectiles.remove(j);
 					removeAsteroid(i);
 					frame.repaint();
@@ -121,8 +133,10 @@ public class Game extends JPanel{
 	}
 
 	private void updateProjectiles(){
-		for (int i = 0; i < projectiles.size(); i++){
-			projectiles.get(i).updateProjectilePosition();
+		if (projectiles.size() > 0){
+			for (int i = 0; i < projectiles.size(); i++){
+				projectiles.get(i).updateProjectilePosition();
+			}
 		}
 	}
 
@@ -132,6 +146,9 @@ public class Game extends JPanel{
 		generateNewAsteroid();
 		checkProjectileCollisions();
 		updateProjectiles();
+		playerRectangle = new Rectangle(shipX, shipY, 30, 30);
+		shipX += velX;
+		shipY += velY;
 	}
 
 	private void removeAsteroid(int index){
