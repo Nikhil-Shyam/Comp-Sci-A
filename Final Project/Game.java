@@ -15,8 +15,8 @@ import java.awt.event.*;
 public class Game extends JPanel{
 	private int shipX;
 	private int shipY;
-	private int time = 60*100;
-	private int lives = 600;
+	private int time = 6000;
+	private int lives = 3;
 	private int asteroidsHit;
 	private boolean gameOver;
 	private ArrayList<Projectile> projectiles;
@@ -28,6 +28,7 @@ public class Game extends JPanel{
 
 	private int velX = 0;
 	private int velY = 0;
+	private int shootCount = 0;
 
     public Game(JFrame frame){
         this.frame = frame;
@@ -53,6 +54,7 @@ public class Game extends JPanel{
         timer = new Timer(10, new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent event){
+                time--;
                 if (!gameOver){
 					updateScreen();
 					frame.repaint();
@@ -69,39 +71,44 @@ public class Game extends JPanel{
 	}
 
 	private void handleKeyPress(KeyEvent event){
-        if(event.getKeyCode() == 38 && shipY > 0)
+        if(event.getKeyCode() == 38)
 			velY = -2;
 
-        if (event.getKeyCode() == 40 && shipY < frame.getHeight()-75)
+        if (event.getKeyCode() == 40)
 			velY = 2;
 
-        if (event.getKeyCode() == 37 && shipX > 0)
+        if (event.getKeyCode() == 37)
 			velX = -2;
 
-        if (event.getKeyCode() == 39 && shipX < frame.getWidth()-45)
+        if (event.getKeyCode() == 39)
 			velX = 2;
 
         if (event.getKeyCode() == 32){
-			shoot();
+			if (shootCount % 3 == 0)
+				shoot();
+			shootCount++;
 		}
 	}
 
 	private void handleKeyRelease(KeyEvent event){
-		if(event.getKeyCode() == 38 && shipY > 0)
+		if(event.getKeyCode() == 38)
 			velY = 0;
 
-		if (event.getKeyCode() == 40 && shipY < frame.getHeight()-75)
+		if (event.getKeyCode() == 40)
 			velY = 0;
 
-		if (event.getKeyCode() == 37 && shipX > 0)
+		if (event.getKeyCode() == 37)
 			velX = 0;
 
-		if (event.getKeyCode() == 39 && shipX < frame.getWidth()-45)
+		if (event.getKeyCode() == 39)
 			velX = 0;
+
+		if (event.getKeyCode() == 32)
+			shootCount = 0;
 	}
 
 	private void shoot(){
-        projectiles.add(new Projectile(shipX+15, shipY));
+        projectiles.add(new Projectile(shipX+12, shipY));
 	}
 
 	private void checkForAsteroidCollisions(){
@@ -115,7 +122,7 @@ public class Game extends JPanel{
 	}
 
 	private void generateNewAsteroid(){
-		int random = (int)(Math.random()*100)+1;
+		int random = (int)(Math.random()*76)+1;
 		int value = 5;
 		if (random == value){
 			asteroids.add(new Asteroid(this));
@@ -134,7 +141,7 @@ public class Game extends JPanel{
 			for (int j = 0; j < projectiles.size(); j++){
 				if (projectiles.get(j).getYPosition() < 0){
 					projectiles.remove(j);
-				}else if (new Rectangle(projectiles.get(j).getXPosition(), projectiles.get(j).getYPosition(), 6, 6).intersects(enemyRectangles.get(i))){
+				}else if (asteroids.size() != i && new Rectangle(projectiles.get(j).getXPosition(), projectiles.get(j).getYPosition(), 6, 6).intersects(enemyRectangles.get(i))){
 					projectiles.remove(j);
 					removeAsteroid(i);
 					asteroidsHit++;
@@ -159,8 +166,19 @@ public class Game extends JPanel{
 		checkProjectileCollisions();
 		updateProjectiles();
 		playerRectangle = new Rectangle(shipX, shipY, 30, 30);
-		shipX += velX;
-		shipY += velY;
+		if (shipX >= frame.getWidth()-45)
+			shipX = 354;
+		else if (shipX <= 0)
+			shipX = 1;
+		else
+			shipX += velX;
+
+		if (shipY >= frame.getHeight()-70)
+			shipY = 529;
+		else if (shipY <= 0)
+			shipY = 1;
+		else
+			shipY += velY;
 	}
 
 	private void removeAsteroid(int index){
@@ -204,7 +222,7 @@ public class Game extends JPanel{
 	}
 
 	private void setGameOver(Graphics graphics){
-		if (time <= 0 && asteroids.size() == 0)
+		if (time >= 0 && asteroids.size() == 0)
 			setEndScreenText(graphics, "ALL ASTEROIDS DESTROYED, YOU WIN!");
 		else if (lives <= 0)
 			setEndScreenText(graphics, "ALL LIVES, LOST, YOU LOSE!");
@@ -217,19 +235,20 @@ public class Game extends JPanel{
 		graphics.fillRect(0, 0, frame.getWidth(), frame.getHeight());
 
 		graphics.setColor(Color.WHITE);
+		for (int i = 0; i < 100; i++)
+			graphics.fillRect((int)(Math.random()*356), (int)(Math.random()*526)+5, 1, 1);
+
 		graphics.drawString("Asteroids Hit: " + Integer.toString(asteroidsHit), 5, 30);
 
-		graphics.setColor(Color.WHITE);
 		graphics.drawString("Time Left: " + Integer.toString(time/100), 5, 15);
 
 		if (!gameOver){
 			drawShip(graphics);
 			drawAsteroids(graphics);
 			drawProjectiles(graphics);
-			time--;
 		}
 
-		if (time == 0 || lives == 0){
+		if (time == 0 || lives == 0 || (time/100 < 15 && asteroids.size() == 0)){
 			gameOver = true;
 			setGameOver(graphics);
 		}
