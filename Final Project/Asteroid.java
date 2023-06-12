@@ -2,8 +2,8 @@ import javax.swing.JComponent;
 
 public class Asteroid
 {
-	private int asteroidX = (int)(Math.random()*340);
-	private int asteroidY = 10;
+	private int asteroidX = (int)(Math.random()*351);
+	private int asteroidY = 0;
 	private boolean isDestroyed = false;
 	private JComponent component;
 
@@ -32,7 +32,7 @@ public class Asteroid
 			asteroidY += (int)(Math.random()*9)+2;
 			if (asteroidY > component.getHeight()){
 				asteroidY = 0;
-				asteroidX = (int)(Math.random()*(component.getWidth()+1));
+				asteroidX = (int)(Math.random()*(component.getWidth()+1-50));
 			}
 		}
 	}
