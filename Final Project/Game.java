@@ -222,10 +222,10 @@ public class Game extends JPanel{
 	}
 
 	private void setGameOver(Graphics graphics){
-		if (time >= 0 && asteroids.size() == 0)
-			setEndScreenText(graphics, "ALL ASTEROIDS DESTROYED, YOU WIN!");
-		else if (lives <= 0)
+		if (lives <= 0)
 			setEndScreenText(graphics, "ALL LIVES, LOST, YOU LOSE!");
+		else if (time >= 0 && asteroids.size() == 0)
+			setEndScreenText(graphics, "ALL ASTEROIDS DESTROYED, YOU WIN!");
 		else if (time <= 0 && asteroids.size() > 0)
 			setEndScreenText(graphics, "OUT OF TIME, YOU LOSE!");
 	}
@@ -236,7 +236,7 @@ public class Game extends JPanel{
 
 		graphics.setColor(Color.WHITE);
 		for (int i = 0; i < 100; i++)
-			graphics.fillRect((int)(Math.random()*356), (int)(Math.random()*526)+5, 1, 1);
+			graphics.fillRect((int)(Math.random()*401), (int)(Math.random()*601), 1, 1);
 
 		graphics.drawString("Asteroids Hit: " + Integer.toString(asteroidsHit), 5, 30);
 
