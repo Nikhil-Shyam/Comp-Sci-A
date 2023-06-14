@@ -8,7 +8,6 @@ import java.awt.Color;
 // import java.awt.event.KeyEvent;
 import java.awt.Graphics;
 // import java.awt.event.KeyAdapter;
-import java.awt.event.ActionEvent;
 // import java.awt.*;
 import java.awt.event.*;
 
@@ -16,7 +15,7 @@ public class Game extends JPanel{
 	private int shipX;
 	private int shipY;
 	private int time = 6000;
-	private int lives = 3;
+	private int lives = 300;
 	private int asteroidsHit;
 	private boolean gameOver;
 	private ArrayList<Projectile> projectiles;
@@ -29,6 +28,13 @@ public class Game extends JPanel{
 	private int velX = 0;
 	private int velY = 0;
 	private int shootCount = 0;
+	private ProjectilePowerUp projectilePowerUp;
+	private Rectangle projectilePowerUpRectangle;
+	private int projectilePowerUpTime = 0;
+	private ShieldPowerUp shieldPowerUp;
+	private Rectangle shieldPowerUpRectangle;
+	private Rectangle shield;
+	private int shieldPowerUpTime = 0;
 
     public Game(JFrame frame){
         this.frame = frame;
@@ -38,6 +44,15 @@ public class Game extends JPanel{
         shipX = 200;
         shipY = 500;
         playerRectangle = new Rectangle(shipX, shipY, 30, 30);
+		projectilePowerUp = new ProjectilePowerUp(this);
+		projectilePowerUp.setProjectilePowerUpY(700);
+		projectilePowerUp.setOffScreen(true);
+		projectilePowerUpRectangle = new Rectangle(frame.getWidth(), projectilePowerUp.getProjectilePowerUpY(), 10, 10);
+		shieldPowerUp = new ShieldPowerUp(this);
+		shieldPowerUp.setShieldPowerUpY(700);
+		shieldPowerUp.setOffScreen(true);
+		shieldPowerUpRectangle = new Rectangle(shieldPowerUp.getShieldPowerUpX(), shieldPowerUp.getShieldPowerUpY());
+		shield = new Rectangle(500, 700, 50, 50);
 
         setFocusable(true);
         addKeyListener(new KeyAdapter(){
@@ -54,8 +69,8 @@ public class Game extends JPanel{
         timer = new Timer(10, new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent event){
-                time--;
                 if (!gameOver){
+					time--;
 					updateScreen();
 					frame.repaint();
 				}
@@ -70,18 +85,26 @@ public class Game extends JPanel{
 		}
 	}
 
+	public void updateProjectilePowerUpRectangle(){
+		projectilePowerUpRectangle.setLocation(projectilePowerUp.getProjectilePowerUpX(), projectilePowerUp.getProjectilePowerUpY());
+	}
+
+	public void updateShieldPowerUpRectangle(){
+		shieldPowerUpRectangle.setLocation(shieldPowerUp.getShieldPowerUpX(), shieldPowerUp.getShieldPowerUpY());
+	}
+
 	private void handleKeyPress(KeyEvent event){
         if(event.getKeyCode() == 38)
-			velY = -2;
+			velY = -3;
 
         if (event.getKeyCode() == 40)
-			velY = 2;
+			velY = 3;
 
         if (event.getKeyCode() == 37)
-			velX = -2;
+			velX = -3;
 
         if (event.getKeyCode() == 39)
-			velX = 2;
+			velX = 3;
 
         if (event.getKeyCode() == 32){
 			if (shootCount % 3 == 0)
@@ -121,9 +144,55 @@ public class Game extends JPanel{
 		}
 	}
 
+	private void checkForProjectilePowerUpCollision(){
+		if (projectilePowerUpRectangle.intersects(playerRectangle)){
+			removeProjectilePowerUp();
+		}
+	}
+
+	private void checkForShieldPowerUpCollision(){
+		if (shieldPowerUpRectangle.intersects(playerRectangle)){
+			removeShieldPowerUp();
+			shieldPowerUp();
+		}
+	}
+
+	private void projectilePowerUp(){
+		if (projectilePowerUpTime % 12 == 0){
+			projectiles.add(new Projectile(shipX, shipY));
+			projectiles.add(new Projectile(shipX+12, shipY));
+			projectiles.add(new Projectile(shipX+24, shipY));
+		}
+		projectilePowerUpTime++;
+		if (projectilePowerUpTime >= 200){
+			projectilePowerUp.setCollected(false);
+			projectilePowerUpTime = 0;
+		}
+	}
+
+	private void shieldPowerUp(){
+		if (time/100 < 59){
+			shield = new Rectangle(shipX-10, shipY-10, 50, 50);
+			shieldPowerUpTime++;
+			for (int i = 0; i < asteroids.size(); i++){
+				if (enemyRectangles.get(i).intersects(shield)){
+					removeAsteroid(i);
+					shieldPowerUp.setCollected(false);
+					shield = new Rectangle(500, 700, 50, 50);
+					shieldPowerUpTime = 0;
+				}
+			}
+			if (shieldPowerUpTime > 850){
+				shieldPowerUp.setCollected(false);
+				shield = new Rectangle(500, 700, 50, 50);
+				shieldPowerUpTime = 0;
+			}
+		}
+	}
+
 	private void generateNewAsteroid(){
-		int random = (int)(Math.random()*76)+1;
-		int value = 5;
+		int random = (int)(Math.random()*65)+1;
+		int value = 1;
 		if (random == value){
 			asteroids.add(new Asteroid(this));
 			enemyRectangles.add(new Rectangle(asteroids.get(asteroids.size()-1).getAsteroidX(), asteroids.get(asteroids.size()-1).getAsteroidY(), 30, 30));
@@ -134,6 +203,31 @@ public class Game extends JPanel{
 		for (int i = 0; i < asteroids.size(); i++){
 			asteroids.get(i).updateAsteroid();
 		}
+	}
+
+	private void generateProjectilePowerUp(){
+		int random = (int)(Math.random()*230)+1;
+		int value = 1;
+		if (random == value && projectilePowerUp.isOffScreen() == true && projectilePowerUp.isCollected() == false){
+			projectilePowerUp = new ProjectilePowerUp(this);
+			projectilePowerUpRectangle = new Rectangle(projectilePowerUp.getProjectilePowerUpX(), projectilePowerUp.getProjectilePowerUpY(), 10, 10);
+		}
+	}
+	private void updateProjectilePowerUpLocation(){
+		projectilePowerUp.updateProjectilePowerUp();
+	}
+
+	private void generateShieldPowerUp(){
+		int random = (int)(Math.random()*230)+1;
+		int value = 1;
+		if (random == value && shieldPowerUp.isOffScreen() == true && shieldPowerUp.isCollected() == false){
+			shieldPowerUp = new ShieldPowerUp(this);
+			shieldPowerUpRectangle = new Rectangle(shieldPowerUp.getShieldPowerUpX(), shieldPowerUp.getShieldPowerUpY(), 10, 10);
+		}
+	}
+
+	private void updateShieldPowerUpLocation(){
+		shieldPowerUp.updateShieldPowerUp();
 	}
 
 	private void checkProjectileCollisions(){
@@ -165,6 +259,20 @@ public class Game extends JPanel{
 		generateNewAsteroid();
 		checkProjectileCollisions();
 		updateProjectiles();
+		checkForProjectilePowerUpCollision();
+		updateProjectilePowerUpLocation();
+		generateProjectilePowerUp();
+		if(projectilePowerUp.isCollected() == true)
+			projectilePowerUp();
+		checkForShieldPowerUpCollision();
+		updateShieldPowerUpLocation();
+		generateShieldPowerUp();
+		if (shieldPowerUp.isCollected() == true)
+			shieldPowerUp();
+		movement();
+	}
+
+	private void movement(){
 		playerRectangle = new Rectangle(shipX, shipY, 30, 30);
 		if (shipX >= frame.getWidth()-45)
 			shipX = 354;
@@ -187,6 +295,18 @@ public class Game extends JPanel{
 		enemyRectangles.remove(index);
 	}
 
+	private void removeProjectilePowerUp(){
+		projectilePowerUp.setCollected(true);
+		projectilePowerUp.setProjectilePowerUpY(frame.getHeight()+1);
+		projectilePowerUp.setOffScreen(true);
+	}
+
+	private void removeShieldPowerUp(){
+		shieldPowerUp.setCollected(true);
+		shieldPowerUp.setShieldPowerUpY(frame.getHeight()+1);
+		shieldPowerUp.setOffScreen(true);
+	}
+
 	private void drawShip(Graphics graphics){
 		int[] x = {shipX, shipX+2, shipX+2, shipX+12, shipX+13, shipX+14, shipX+15, shipX+16, shipX+17, shipX+18, shipX+28, shipX+28, shipX+30, shipX+30, shipX+28, shipX+28, shipX+18, shipX+17, shipX+16, shipX+15, shipX+14, shipX+13, shipX+12, shipX+2, shipX+2, shipX};
 		int[] y = {shipY, shipY, shipY+13, shipY+7, shipY+5, shipY+3, shipY+3, shipY+3, shipY+5, shipY+7, shipY+13, shipY, shipY, shipY+30, shipY+30, shipY+17, shipY+23, shipY+25, shipY+27, shipY+27, shipY+27, shipY+25, shipY+23, shipY+17, shipY+30, shipY+30};
@@ -206,6 +326,29 @@ public class Game extends JPanel{
 				graphics.fillOval(asteroids.get(i).getAsteroidX(), asteroids.get(i).getAsteroidY(), 30, 30);
 				updateEnemyRectangles();
 			}
+		}
+	}
+
+	private void drawProjectilePowerUp(Graphics graphics){
+		if (!projectilePowerUp.isCollected()){
+			graphics.setColor(Color.YELLOW);
+			graphics.fillOval(projectilePowerUp.getProjectilePowerUpX(), projectilePowerUp.getProjectilePowerUpY(), 10, 10);
+			updateProjectilePowerUpRectangle();
+		}
+	}
+
+	private void drawShieldPowerUp(Graphics graphics){
+		if (!shieldPowerUp.isCollected()){
+			graphics.setColor(Color.BLUE);
+			graphics.fillOval(shieldPowerUp.getShieldPowerUpX(), shieldPowerUp.getShieldPowerUpY(), 10, 10);
+			updateShieldPowerUpRectangle();
+		}
+	}
+
+	private void drawShield(Graphics graphics){
+		if(shieldPowerUp.isCollected()){
+			graphics.setColor(Color.CYAN);
+			graphics.drawOval((int)shield.getX(), (int)shield.getY(), 50, 50);
 		}
 	}
 
@@ -246,9 +389,12 @@ public class Game extends JPanel{
 			drawShip(graphics);
 			drawAsteroids(graphics);
 			drawProjectiles(graphics);
+			drawProjectilePowerUp(graphics);
+			drawShieldPowerUp(graphics);
+			drawShield(graphics);
 		}
 
-		if (time == 0 || lives == 0 || (time/100 < 15 && asteroids.size() == 0)){
+		if (time == 0 || lives == 0 || (time/100 < 10 && asteroids.size() == 0)){
 			gameOver = true;
 			setGameOver(graphics);
 		}
