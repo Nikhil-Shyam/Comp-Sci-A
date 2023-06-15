@@ -112,6 +112,28 @@ public class Game extends JPanel{
 				shoot();
 			shootCount++;
 		}
+
+		if (event.getKeyCode() == 10 && gameOver == true){
+			gameOver = false;
+			lives = 3;
+			time = 6000;
+			asteroidsHit = 0;
+			asteroids = new ArrayList<Asteroid>();
+			projectiles = new ArrayList<Projectile>();
+			enemyRectangles = new ArrayList<Rectangle>();
+			shipX = 200;
+			shipY = 500;
+			playerRectangle = new Rectangle(shipX, shipY, 30, 30);
+			projectilePowerUp = new ProjectilePowerUp(this);
+			projectilePowerUp.setProjectilePowerUpY(700);
+			projectilePowerUp.setOffScreen(true);
+			projectilePowerUpRectangle = new Rectangle(frame.getWidth(), projectilePowerUp.getProjectilePowerUpY(), 10, 10);
+			shieldPowerUp = new ShieldPowerUp(this);
+			shieldPowerUp.setShieldPowerUpY(700);
+			shieldPowerUp.setOffScreen(true);
+			shieldPowerUpRectangle = new Rectangle(shieldPowerUp.getShieldPowerUpX(), shieldPowerUp.getShieldPowerUpY());
+			shield = new Rectangle(500, 700, 50, 50);
+		}
 	}
 
 	private void handleKeyRelease(KeyEvent event){
@@ -362,7 +384,7 @@ public class Game extends JPanel{
 
 	private void setEndScreenText(Graphics graphics, String str){
 		graphics.setColor(Color.PINK);
-		graphics.drawString(str, 100, 300);
+		graphics.drawString(str, 100, 250);
 	}
 
 	private void setGameOver(Graphics graphics){
@@ -400,6 +422,7 @@ public class Game extends JPanel{
 		if (time == 0 || lives == 0 || (time/100 < 10 && asteroids.size() == 0)){
 			gameOver = true;
 			setGameOver(graphics);
+			graphics.drawString("PRESS 'Enter' TO PLAY AGAIN", 100, 300);
 		}
 	}
 }
