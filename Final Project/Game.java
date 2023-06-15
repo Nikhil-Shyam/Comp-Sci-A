@@ -35,6 +35,7 @@ public class Game extends JPanel{
 	private Rectangle shieldPowerUpRectangle;
 	private Rectangle shield;
 	private int shieldPowerUpTime = 0;
+	private ArrayList<Integer> starX = new ArrayList<Integer>();
 
 	public Game(JFrame frame){
 		this.frame = frame;
@@ -107,7 +108,7 @@ public class Game extends JPanel{
 			velX = 3;
 
 		if (event.getKeyCode() == 32){
-			if (shootCount % 3 == 0)
+			if (shootCount % 2 == 0)
 				shoot();
 			shootCount++;
 		}
@@ -171,7 +172,7 @@ public class Game extends JPanel{
 	}
 
 	private void shieldPowerUp(){
-		if (time/100 < 59){
+		if (time/100 < 57){
 			shield = new Rectangle(shipX-10, shipY-10, 50, 50);
 			shieldPowerUpTime++;
 			for (int i = 0; i < asteroids.size(); i++){
@@ -378,8 +379,10 @@ public class Game extends JPanel{
 		graphics.fillRect(0, 0, frame.getWidth(), frame.getHeight());
 
 		graphics.setColor(Color.WHITE);
-		//for (int i = 0; i < 100; i++)
-		//	graphics.fillRect((int)(Math.random()*401), (int)(Math.random()*601), 1, 1);
+		for (int i = 0; i < 100; i++)
+			starX.add((int)(Math.random()*401));
+		for (int i = 0; i < starX.size(); i++)
+			graphics.fillRect(starX.get(i), i+=3, 1, 1);
 
 		graphics.drawString("Asteroids Hit: " + Integer.toString(asteroidsHit), 5, 30);
 
