@@ -118,21 +118,23 @@ public class Game extends JPanel{
 			lives = 3;
 			time = 6000;
 			asteroidsHit = 0;
-			asteroids = new ArrayList<Asteroid>();
-			projectiles = new ArrayList<Projectile>();
-			enemyRectangles = new ArrayList<Rectangle>();
+			asteroids.clear();
+			projectiles.clear();
+			enemyRectangles.clear();
 			shipX = 200;
 			shipY = 500;
-			playerRectangle = new Rectangle(shipX, shipY, 30, 30);
-			projectilePowerUp = new ProjectilePowerUp(this);
+			playerRectangle.setLocation(shipX, shipY);
 			projectilePowerUp.setProjectilePowerUpY(700);
 			projectilePowerUp.setOffScreen(true);
-			projectilePowerUpRectangle = new Rectangle(frame.getWidth(), projectilePowerUp.getProjectilePowerUpY(), 10, 10);
-			shieldPowerUp = new ShieldPowerUp(this);
+			projectilePowerUpRectangle.setLocation(frame.getWidth(), projectilePowerUp.getProjectilePowerUpY());
 			shieldPowerUp.setShieldPowerUpY(700);
 			shieldPowerUp.setOffScreen(true);
-			shieldPowerUpRectangle = new Rectangle(shieldPowerUp.getShieldPowerUpX(), shieldPowerUp.getShieldPowerUpY());
-			shield = new Rectangle(500, 700, 50, 50);
+			shieldPowerUpRectangle.setLocation(shieldPowerUp.getShieldPowerUpX(), shieldPowerUp.getShieldPowerUpY());
+			shield.setLocation(500, 700);
+			shootCount = 0;
+			projectilePowerUpTime = 0;
+			shieldPowerUpTime = 0;
+			timer.start();
 		}
 	}
 
@@ -423,6 +425,7 @@ public class Game extends JPanel{
 			gameOver = true;
 			setGameOver(graphics);
 			graphics.drawString("PRESS 'Enter' TO PLAY AGAIN", 100, 300);
+			timer.stop();
 		}
 	}
 }
