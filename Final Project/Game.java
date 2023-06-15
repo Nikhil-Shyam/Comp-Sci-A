@@ -15,7 +15,7 @@ public class Game extends JPanel{
 	private int shipX;
 	private int shipY;
 	private int time = 6000;
-	private int lives = 300;
+	private int lives = 3;
 	private int asteroidsHit;
 	private boolean gameOver;
 	private ArrayList<Projectile> projectiles;
@@ -36,14 +36,14 @@ public class Game extends JPanel{
 	private Rectangle shield;
 	private int shieldPowerUpTime = 0;
 
-    public Game(JFrame frame){
-        this.frame = frame;
-        asteroids = new ArrayList<Asteroid>();
-        projectiles = new ArrayList<Projectile>();
-        enemyRectangles = new ArrayList<Rectangle>();
-        shipX = 200;
-        shipY = 500;
-        playerRectangle = new Rectangle(shipX, shipY, 30, 30);
+	public Game(JFrame frame){
+		this.frame = frame;
+		asteroids = new ArrayList<Asteroid>();
+		projectiles = new ArrayList<Projectile>();
+		enemyRectangles = new ArrayList<Rectangle>();
+		shipX = 200;
+		shipY = 500;
+		playerRectangle = new Rectangle(shipX, shipY, 30, 30);
 		projectilePowerUp = new ProjectilePowerUp(this);
 		projectilePowerUp.setProjectilePowerUpY(700);
 		projectilePowerUp.setOffScreen(true);
@@ -54,32 +54,32 @@ public class Game extends JPanel{
 		shieldPowerUpRectangle = new Rectangle(shieldPowerUp.getShieldPowerUpX(), shieldPowerUp.getShieldPowerUpY());
 		shield = new Rectangle(500, 700, 50, 50);
 
-        setFocusable(true);
-        addKeyListener(new KeyAdapter(){
-            @Override
-            public void keyPressed(KeyEvent event){
-                handleKeyPress(event);
-            }
+		setFocusable(true);
+		addKeyListener(new KeyAdapter(){
+			@Override
+			public void keyPressed(KeyEvent event){
+				handleKeyPress(event);
+			}
 			@Override
 			public void keyReleased(KeyEvent event){
 				handleKeyRelease(event);
 			}
-        });
+		});
 
-        timer = new Timer(10, new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent event){
-                if (!gameOver){
+		timer = new Timer(10, new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent event){
+				if (!gameOver){
 					time--;
 					updateScreen();
 					frame.repaint();
 				}
-            }
-        });
-       	timer.start();
-    }
+			}
+		});
+		timer.start();
+	}
 
-    public void updateEnemyRectangles(){
+	public void updateEnemyRectangles(){
 		for (int i = 0; i < asteroids.size(); i++){
 			enemyRectangles.get(i).setLocation(asteroids.get(i).getAsteroidX(), asteroids.get(i).getAsteroidY());
 		}
@@ -94,19 +94,19 @@ public class Game extends JPanel{
 	}
 
 	private void handleKeyPress(KeyEvent event){
-        if(event.getKeyCode() == 38)
+		if(event.getKeyCode() == 38)
 			velY = -3;
 
-        if (event.getKeyCode() == 40)
+		if (event.getKeyCode() == 40)
 			velY = 3;
 
-        if (event.getKeyCode() == 37)
+		if (event.getKeyCode() == 37)
 			velX = -3;
 
-        if (event.getKeyCode() == 39)
+		if (event.getKeyCode() == 39)
 			velX = 3;
 
-        if (event.getKeyCode() == 32){
+		if (event.getKeyCode() == 32){
 			if (shootCount % 3 == 0)
 				shoot();
 			shootCount++;
@@ -131,7 +131,7 @@ public class Game extends JPanel{
 	}
 
 	private void shoot(){
-        projectiles.add(new Projectile(shipX+12, shipY));
+		projectiles.add(new Projectile(shipX+12, shipY));
 	}
 
 	private void checkForAsteroidCollisions(){
@@ -378,8 +378,8 @@ public class Game extends JPanel{
 		graphics.fillRect(0, 0, frame.getWidth(), frame.getHeight());
 
 		graphics.setColor(Color.WHITE);
-		for (int i = 0; i < 100; i++)
-			graphics.fillRect((int)(Math.random()*401), (int)(Math.random()*601), 1, 1);
+		//for (int i = 0; i < 100; i++)
+		//	graphics.fillRect((int)(Math.random()*401), (int)(Math.random()*601), 1, 1);
 
 		graphics.drawString("Asteroids Hit: " + Integer.toString(asteroidsHit), 5, 30);
 
