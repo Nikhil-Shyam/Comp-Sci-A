@@ -196,7 +196,7 @@ public class Game extends JPanel{
 	}
 
 	private void shieldPowerUp(){
-		if (time/100 < 57){
+		if (time/100 < 58){
 			shield = new Rectangle(shipX-10, shipY-10, 50, 50);
 			shieldPowerUpTime++;
 			for (int i = 0; i < asteroids.size(); i++){
